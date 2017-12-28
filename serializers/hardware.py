@@ -6,3 +6,10 @@ class SpectrumAnalyzerSerializer(Serializer):
 
     def freq_range(self, row):
         return "{} GHz - {} GHz".format(row.min_frequency, row.max_frequency)
+
+
+class FieldProbeSerializer(Serializer):
+    attributes = ['id', 'name', 'kind', 'min_frequency', 'max_frequency', 'correction_factor', 'default']
+
+    def freq_range(self, row):
+        return "{} GHz - {} GHz".format(row.min_frequency, row.max_frequency)

@@ -3,7 +3,7 @@ from weppy.orm import Database
 from weppy_bs3 import BS3
 from weppy_rest import REST
 
-from serializers.hardware import SpectrumAnalyzerSerializer
+from serializers.hardware import SpectrumAnalyzerSerializer, FieldProbeSerializer
 from utils import CORS
 
 app = App(__name__)
@@ -21,7 +21,7 @@ from controllers import main, hardware
 
 analyzers = app.rest_module(__name__, 'spectrumanalyzer', SpectrumAnalyzer, serializer=SpectrumAnalyzerSerializer,
                             url_prefix='analyzers')
-probes = app.rest_module(__name__, 'fieldprobe', FieldProbe, url_prefix='probes')
+probes = app.rest_module(__name__, 'fieldprobe', FieldProbe, serializer=FieldProbeSerializer, url_prefix='probes')
 
 if __name__ == "__main__":
     app.run(host='0.0.0.0', port=8000, debug=True)
