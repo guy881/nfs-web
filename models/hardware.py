@@ -1,4 +1,4 @@
-from weppy.orm import Model, Field, belongs_to, has_many
+from weppy.orm import Model, Field, belongs_to, has_many, before_update, before_insert
 
 
 class SpectrumAnalyzer(Model):
@@ -27,6 +27,21 @@ class SpectrumAnalyzer(Model):
             'unique': True
         }
     }
+
+    @before_update
+    def set_as_default(self, dbset, fields):
+        self._set_as_default(fields)
+
+    @before_insert
+    def set_new_as_default(self, fields):
+        self._set_as_default(fields)
+
+    @staticmethod
+    def _set_as_default(fields):
+        if fields['default']:
+            analyzers = SpectrumAnalyzer.where(lambda s: (s.default == True)).select()
+            for analyzer in analyzers:
+                analyzer.update_record(default=False)
 
 
 class FieldProbe(Model):
