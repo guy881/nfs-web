@@ -3,7 +3,10 @@ from weppy.orm import Model, Field, belongs_to, has_many, before_update, before_
 
 class SpectrumAnalyzer(Model):
     tablename = 'SpectrumAnalyzers'
-    has_many({'probes': 'FieldProbe'})
+    has_many(
+        {'probes': 'FieldProbe'},
+        {'scans': 'Scan'}
+    )
     name = Field.string()
     model = Field.string()
     min_frequency = Field.float()

@@ -1,12 +1,12 @@
 from datetime import datetime
 
-from weppy.orm import Model, Field, has_one
+from weppy.orm import Model, Field, has_one, belongs_to
 
 
 class Scan(Model):
     tablename = 'Scans'
-    has_one({'analyzer': 'SpectrumAnalyzer'})
-    has_one({'probe': 'FieldProbe'})
+    belongs_to({'analyzer': 'SpectrumAnalyzer'})
+    belongs_to({'probe': 'FieldProbe'})
     name = Field.string()
     date = Field.datetime()
     kind = Field.string()
