@@ -4,10 +4,11 @@ from models.scanning import Scan
 
 
 class ScanSerializer(Serializer):
-    attributes = ['id', 'name', 'date', 'kind', 'min_frequency', 'max_frequency', 'analyzer']
+    attributes = ['id', 'name', 'date', 'kind', 'min_frequency', 'max_frequency', 'analyzer', 'min_frequency_unit',
+                  'max_frequency_unit']
 
     def freq_range(self, row):
-        return "{} GHz - {} GHz".format(row.min_frequency, row.max_frequency)
+        return f"{row.min_frequency} {row.min_frequency_unit} - {row.max_frequency} {row.max_frequency_unit}"
 
     def printable_date(self, row):
         return Scan.date.represent(row.date)

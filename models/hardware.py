@@ -11,6 +11,8 @@ class SpectrumAnalyzer(Model):
     model = Field.string()
     min_frequency = Field.float()
     max_frequency = Field.float()
+    min_frequency_unit = Field.string(default='GHz')
+    max_frequency_unit = Field.string(default='GHz')
     default = Field.bool()
 
     validation = {
@@ -53,6 +55,8 @@ class FieldProbe(Model):
     kind = Field.string()
     min_frequency = Field.float()
     max_frequency = Field.float()
+    min_frequency_unit = Field.string(default='GHz')
+    max_frequency_unit = Field.string(default='GHz')
     correction_factor = Field.float()
     default = Field.bool()
 

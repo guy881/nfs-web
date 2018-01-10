@@ -34,7 +34,7 @@ scans = app.rest_module(__name__, 'scan', Scan, serializer=ScanSerializer, url_p
 def scans_list(dbset):
     rows = dbset.select(paginate=scans.get_pagination())
     response = scans.serialize_many(rows)
-    response['next_scan_name'] = "Scan {}".format(Scan.all().count() + 1)  # name for new scan
+    response['next_scan_name'] = "Scan {}".format(Scan.last().id + 1)  # name for new scan
     today = datetime.today()
     response['current_date'] = today
     response['current_date_printable'] = today.strftime("%d.%m.%Y")  # date for new scan

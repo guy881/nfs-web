@@ -12,6 +12,8 @@ class Scan(Model):
     kind = Field.string()
     min_frequency = Field.float()
     max_frequency = Field.float()
+    min_frequency_unit = Field.string(default='GHz')
+    max_frequency_unit = Field.string(default='GHz')
 
     validation = {
         'name': {'presence': True},
@@ -26,7 +28,7 @@ class Scan(Model):
     }
 
     default_values = {
-        'date': lambda: datetime.now
+        'date': lambda: datetime.now,
     }
 
     indexes = {
