@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from weppy.orm import Model, Field, has_one, belongs_to
+from weppy.orm import Model, Field, belongs_to
 
 
 class Scan(Model):
@@ -14,12 +14,18 @@ class Scan(Model):
     max_frequency = Field.float()
     min_frequency_unit = Field.string(default='GHz')
     max_frequency_unit = Field.string(default='GHz')
+    min_x = Field.float(validation={'blank': True, 'gt': 0})
+    min_y = Field.float(validation={'blank': True, 'gt': 0})
+    min_z = Field.float(validation={'blank': True, 'gt': 0})
+    max_x = Field.float(validation={'blank': True, 'gt': 0})
+    max_y = Field.float(validation={'blank': True, 'gt': 0})
+    max_z = Field.float(validation={'blank': True, 'gt': 0})
 
     validation = {
         'name': {'presence': True},
         'kind': {'presence': True, 'in': ('flat', 'volumetric', 'z')},
-        'min_frequency': {'presence': True},
-        'max_frequency': {'presence': True},
+        'min_frequency': {'presence': True, 'gt': 0},
+        'max_frequency': {'presence': True, 'gt': 0},
     }
 
     repr_values = {
