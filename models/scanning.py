@@ -14,12 +14,13 @@ class Scan(Model):
     max_frequency = Field.float()
     min_frequency_unit = Field.string(default='GHz')
     max_frequency_unit = Field.string(default='GHz')
-    min_x = Field.float(validation={'blank': True, 'gt': 0})
-    min_y = Field.float(validation={'blank': True, 'gt': 0})
-    min_z = Field.float(validation={'blank': True, 'gt': 0})
+    min_x = Field.float(validation={'blank': True, 'gte': 0})
+    min_y = Field.float(validation={'blank': True, 'gte': 0})
+    min_z = Field.float(validation={'blank': True, 'gte': 0})
     max_x = Field.float(validation={'blank': True, 'gt': 0})
     max_y = Field.float(validation={'blank': True, 'gt': 0})
     max_z = Field.float(validation={'blank': True, 'gt': 0})
+    pcb_filename = Field.string(default='')
 
     validation = {
         'name': {'presence': True},
