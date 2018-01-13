@@ -21,6 +21,8 @@ class Scan(Model):
     max_y = Field.float(validation={'blank': True, 'gt': 0})
     max_z = Field.float(validation={'blank': True, 'gt': 0})
     pcb_filename = Field.string(default='')
+    status = Field.string()
+    progress = Field.int(default=0)
 
     validation = {
         'name': {'presence': True},
