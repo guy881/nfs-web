@@ -1,10 +1,13 @@
 from datetime import datetime
+from multiprocessing import Pool
+from time import sleep
 
-from weppy import App
+from weppy import App, response
 from weppy.orm import Database
 from weppy_bs3 import BS3
 from weppy_rest import REST
 
+from logic.scanning import begin_scan, scan_finished_callback
 from serializers.hardware import SpectrumAnalyzerSerializer, FieldProbeSerializer
 from serializers.scanning import ScanSerializer
 from utils import CORS
@@ -39,6 +42,23 @@ def scans_list(dbset):
     response['current_date'] = today
     response['current_date_printable'] = today.strftime("%d.%m.%Y")  # date for new scan
     return response
+
+
+@scans.create()
+def scans_new():
+    attrs = scans.parse_params()
+    resp = Scan.create(**attrs)
+    if resp.errors:
+        response.status = 422
+        return scans.error_422(resp.errors)
+
+    # success, proceed with scan
+    pool = Pool()
+    res = pool.apply_async(begin_scan, args=[resp.id], callback=scan_finished_callback)
+    print(res.get())
+    pool.close()
+
+    return scans.serialize_one(resp.id)
 
 
 if __name__ == "__main__":
