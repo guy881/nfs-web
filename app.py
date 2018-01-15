@@ -1,6 +1,5 @@
 from datetime import datetime
-from multiprocessing import Pool
-from time import sleep
+from multiprocessing.dummy import Pool
 
 from weppy import App, response
 from weppy.orm import Database
@@ -10,6 +9,7 @@ from weppy_rest import REST
 from logic.scanning import begin_scan, scan_finished_callback
 from serializers.hardware import SpectrumAnalyzerSerializer, FieldProbeSerializer
 from serializers.scanning import ScanSerializer
+from tasks import increase_progress
 from utils import CORS
 
 app = App(__name__)
@@ -17,6 +17,7 @@ app.config.url_default_namespace = "main"
 app.use_extension(BS3)
 app.use_extension(REST)
 
+app.config_from_yaml('db.yml', 'db')
 db = Database(app, auto_migrate=True)
 app.pipeline = [db.pipe, CORS()]
 
@@ -37,7 +38,9 @@ scans = app.rest_module(__name__, 'scan', Scan, serializer=ScanSerializer, url_p
 def scans_list(dbset):
     rows = dbset.select(paginate=scans.get_pagination())
     response = scans.serialize_many(rows)
-    response['next_scan_name'] = "Scan {}".format(Scan.last().id + 1)  # name for new scan
+    last = Scan.last()
+    new_id = last.id + 1 if last else 1
+    response['next_scan_name'] = "Scan {}".format(new_id)  # name for new scan
     today = datetime.today()
     response['current_date'] = today
     response['current_date_printable'] = today.strftime("%d.%m.%Y")  # date for new scan
@@ -53,12 +56,10 @@ def scans_new():
         return scans.error_422(resp.errors)
 
     # success, proceed with scan
-    pool = Pool()
-    res = pool.apply_async(begin_scan, args=[resp.id], callback=scan_finished_callback)
-    print(res.get())
-    pool.close()
+    serialized_scan = scans.serialize_one(resp.id)
+    async_result = increase_progress.delay(resp.id)
 
-    return scans.serialize_one(resp.id)
+    return serialized_scan
 
 
 if __name__ == "__main__":
