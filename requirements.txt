@@ -1,3 +1,4 @@
 weppy
 weppy-BS3
 weppy-REST
+psycopg2
