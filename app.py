@@ -9,7 +9,7 @@ from weppy_rest import REST
 from logic.scanning import begin_scan, scan_finished_callback
 from serializers.hardware import SpectrumAnalyzerSerializer, FieldProbeSerializer
 from serializers.scanning import ScanSerializer
-from tasks import increase_progress
+# from tasks import increase_progress
 from utils import CORS
 
 app = App(__name__)
