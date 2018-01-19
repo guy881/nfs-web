@@ -8,18 +8,16 @@ from models.hardware import FieldProbe, SpectrumAnalyzer
 from models.scanning import Scan
 
 celer = Celery('tasks', backend='db+sqlite:///databases/dummy.db', broker='pyamqp://guest@localhost//')
-app = App(__name__)
+app = App('app')
 app.config_from_yaml('db.yml', 'db')
 db = Database(app)
 db.define_models(SpectrumAnalyzer, FieldProbe, Scan)
-app.pipeline = [db.pipe]
 
 
 @celer.task
 def increase_progress(scan_id):
     with db.connection():
         scan = Scan.get(scan_id)
-        print(scan)
         while scan.status != 'finished':
             scan.update_record(progress=scan.progress + 10)
             if scan.progress == 100:

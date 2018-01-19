@@ -1,6 +1,6 @@
 from datetime import datetime
-from multiprocessing.dummy import Pool
 
+from multiprocessing.pool import Pool
 from weppy import App, response
 from weppy.orm import Database
 from weppy_bs3 import BS3
@@ -57,7 +57,11 @@ def scans_new():
 
     # success, proceed with scan
     serialized_scan = scans.serialize_one(resp.id)
-    async_result = increase_progress.delay(resp.id)
+    pool = Pool(processes=1)
+    res = pool.apply_async(begin_scan, args=[resp.id], callback=scan_finished_callback)
+    pool.close()
+    # res.get()
+    # async_result = increase_progress.delay(resp.id)
 
     return serialized_scan
 
