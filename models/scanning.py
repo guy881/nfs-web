@@ -1,12 +1,13 @@
 from datetime import datetime
 
-from weppy.orm import Model, Field, belongs_to
+from weppy.orm import Model, Field, belongs_to, has_one
 
 
 class Scan(Model):
     tablename = 'Scans'
     belongs_to({'analyzer': 'SpectrumAnalyzer'})
     belongs_to({'probe': 'FieldProbe'})
+    has_one({'result': 'ScanResult'})
     name = Field.string()
     date = Field.datetime()
     kind = Field.string()
@@ -46,3 +47,13 @@ class Scan(Model):
             'unique': True
         }
     }
+
+
+class ScanResult(Model):
+    tablename = 'ScanResults'
+    belongs_to({'scan': 'Scan'})
+    x = Field.text()
+    y = Field.text()
+    z = Field.text()
+    f = Field.text()
+    e = Field.text(auto_validation=False)

@@ -1,3 +1,4 @@
+scipy
 weppy
 weppy-BS3
 weppy-REST

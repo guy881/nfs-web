@@ -21,3 +21,9 @@ class ScanSerializer(Serializer):
 
     def probe_name(self, row):
         return row.probe.name if row.probe else ''
+
+    def result(self, row):
+        result = row.result()
+        if result:
+            return result.id
+        return None

@@ -22,9 +22,9 @@ db = Database(app, auto_migrate=True)
 app.pipeline = [db.pipe, CORS()]
 
 from models.hardware import SpectrumAnalyzer, FieldProbe
-from models.scanning import Scan
+from models.scanning import Scan, ScanResult
 
-db.define_models(SpectrumAnalyzer, FieldProbe, Scan)
+db.define_models(SpectrumAnalyzer, FieldProbe, Scan, ScanResult)
 from controllers import main, hardware
 
 analyzers = app.rest_module(__name__, 'spectrumanalyzer', SpectrumAnalyzer, serializer=SpectrumAnalyzerSerializer,
@@ -32,6 +32,8 @@ analyzers = app.rest_module(__name__, 'spectrumanalyzer', SpectrumAnalyzer, seri
 probes = app.rest_module(__name__, 'fieldprobe', FieldProbe, serializer=FieldProbeSerializer, url_prefix='probes')
 
 scans = app.rest_module(__name__, 'scan', Scan, serializer=ScanSerializer, url_prefix='scans')
+
+results = app.rest_module(__name__, 'result', ScanResult, url_prefix='results')
 
 
 @scans.index()
