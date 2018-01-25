@@ -8,13 +8,17 @@ from weppy.orm import Database
 from models.hardware import FieldProbe, SpectrumAnalyzer
 from models.scanning import Scan, ScanResult
 
-app = App('app')
-app.config_from_yaml('db.yml', 'db')
-db = Database(app)
-db.define_models(SpectrumAnalyzer, FieldProbe, Scan, ScanResult)
+
+def initialize_database():
+    app = App('app')
+    app.config_from_yaml('db.yml', 'db')
+    db = Database(app)
+    db.define_models(SpectrumAnalyzer, FieldProbe, Scan, ScanResult)
+    return db
 
 
 def begin_scan(scan_id):
+    db = initialize_database()
     with db.connection():
         scan = None
         while not scan or scan.status != 'finished':
@@ -27,11 +31,12 @@ def begin_scan(scan_id):
             if scan.progress == 100:
                 scan.update_record(status='finished')
             db.commit()
-            sleep(2)
+            sleep(1)
         return scan_id
 
 
 def scan_finished_callback(scan_id):
+    db = initialize_database()
     print("scan finished")
     mat_contents = scipy.io.loadmat('/home/stevens/Desktop/praca_inż/materiały/wizualizacja/NFS.mat')
 
@@ -58,6 +63,7 @@ def scan_finished_callback(scan_id):
             e=e,
             scan=scan_id
         )
+        print(result)
         db.commit()
 
 

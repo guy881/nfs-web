@@ -1,6 +1,6 @@
 import scipy.io
 
-mat_contents = scipy.io.loadmat('/home/stevens/Desktop/praca_inż/materiały/wizualizacja/NFS.mat')
+mat_contents = scipy.io.loadmat('/home/stevens/Desktop/praca_inż/materiały/wizualizacja/NFS2.mat')
 
 x = mat_contents['x'].flatten()
 y = mat_contents['y'].flatten()

@@ -59,11 +59,9 @@ def scans_new():
 
     # success, proceed with scan
     serialized_scan = scans.serialize_one(resp.id)
-    pool = Pool(processes=1)
-    res = pool.apply_async(begin_scan, args=[resp.id], callback=scan_finished_callback)
+    pool = Pool()
+    pool.apply_async(begin_scan, args=[resp.id], callback=scan_finished_callback)
     pool.close()
-    # res.get()
-    # async_result = increase_progress.delay(resp.id)
 
     return serialized_scan
 

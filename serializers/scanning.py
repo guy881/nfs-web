@@ -5,7 +5,7 @@ from models.scanning import Scan
 
 class ScanSerializer(Serializer):
     attributes = ['id', 'name', 'date', 'kind', 'min_frequency', 'max_frequency', 'analyzer', 'min_frequency_unit',
-                  'max_frequency_unit', 'pcb_filename', 'status', 'progress']
+                  'max_frequency_unit', 'pcb_filename', 'status', 'progress', 'min_z', 'max_z']
 
     def freq_range(self, row):
         return f"{row.min_frequency} {row.min_frequency_unit} - {row.max_frequency} {row.max_frequency_unit}"
@@ -21,6 +21,9 @@ class ScanSerializer(Serializer):
 
     def probe_name(self, row):
         return row.probe.name if row.probe else ''
+
+    def z_availabe(self, row):
+        return row.kind in ['volumetric', 'z']
 
     def result(self, row):
         result = row.result()
