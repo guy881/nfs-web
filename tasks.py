@@ -6,7 +6,7 @@ from weppy import App
 from weppy.orm import Database
 
 from models.hardware import FieldProbe, SpectrumAnalyzer
-from models.scanning import Scan, ScanResult
+from models.scanning import Scan, ScanResult, XResultRow
 
 celer = Celery('tasks', broker='pyamqp://guest@localhost//')
 
@@ -15,7 +15,7 @@ def initialize_database():
     app = App('app')
     app.config_from_yaml('db.yml', 'db')
     db = Database(app)
-    db.define_models(SpectrumAnalyzer, FieldProbe, Scan, ScanResult)
+    db.define_models(SpectrumAnalyzer, FieldProbe, Scan, ScanResult, XResultRow)
     return db
 
 
@@ -30,13 +30,17 @@ def save_scan_result(scan):
 
     scipy.set_printoptions(threshold=scipy.inf)
     kwargs = {'formatter': {'float_kind': lambda number: "%.3f" % number}, 'separator': ', '}
-    x = scipy.array2string(x, **kwargs)
-    y = scipy.array2string(y, **kwargs)
-    z = scipy.array2string(z, **kwargs)
-    f = scipy.array2string(f, **kwargs)
-    e = scipy.array2string(e, **kwargs)
+    x_str = scipy.array2string(x, **kwargs)
+    y_str = scipy.array2string(y, **kwargs)
+    z_str = scipy.array2string(z, **kwargs)
+    f_str = scipy.array2string(f, **kwargs)
+    # e = scipy.array2string(e, **kwargs)
 
-    result = ScanResult.create(x=x, y=y, z=z, f=f, e=e, scan=scan.id)
+    result = ScanResult.create(x=x_str, y=y_str, z=z_str, f=f_str, scan=scan.id)
+    for x_index, y in enumerate(e):
+        y_str = scipy.array2string(y, **kwargs)
+        XResultRow.create(x_index=x_index, y=y_str, result=result.id)
+
     scan.update_record(status='finished')
     print(result)
 

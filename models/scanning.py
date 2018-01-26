@@ -57,3 +57,11 @@ class ScanResult(Model):
     z = Field.text()
     f = Field.text()
     e = Field.text(auto_validation=False)
+
+
+class XResultRow(Model):
+    auto_validation = False
+    tablename = 'XResultRows'
+    belongs_to({'result': 'ScanResult'})
+    x_index = Field.int()
+    y = Field.text(auto_validation=False)

@@ -8,6 +8,12 @@
         "nfs@80.211.240.191"
       ],
       "python-requirements": "requirements.txt"
+    },
+    "pi3": {
+      "hosts": [
+        "pi@192.168.0.16"
+      ],
+      "python-requirements": "requirements.txt"
     }
   }
 }

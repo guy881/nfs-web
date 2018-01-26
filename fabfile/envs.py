@@ -43,3 +43,9 @@ develop = Environment("aruba", {
     "parent_dir": os.path.join("/", "var", "www"),
     "DB_PASSWORD": 'asdasd12'
 })
+
+pi3 = Environment("pi3", {
+    "username": env.config["project"],
+    "parent_dir": os.path.join("/", "var", "www"),
+    "DB_PASSWORD": 'asdasd12'
+})
