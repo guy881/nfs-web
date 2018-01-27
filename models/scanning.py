@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from weppy.orm import Model, Field, belongs_to, has_one
+from weppy.orm import Model, Field, belongs_to, has_one, has_many
 
 
 class Scan(Model):
@@ -52,15 +52,22 @@ class Scan(Model):
 class ScanResult(Model):
     tablename = 'ScanResults'
     belongs_to({'scan': 'Scan'})
+    has_many({'x_results': 'XResultRow'})
     x = Field.text()
     y = Field.text()
     z = Field.text()
     f = Field.text()
     e = Field.text(auto_validation=False)
+    s = Field.blob()
+
+
+class ScanResultMat(Model):
+    tablename = 'ScanResultsMat'
+    belongs_to({'scan': 'Scan'})
+    mat_filename = Field.string(default='')
 
 
 class XResultRow(Model):
-    auto_validation = False
     tablename = 'XResultRows'
     belongs_to({'result': 'ScanResult'})
     x_index = Field.int()
