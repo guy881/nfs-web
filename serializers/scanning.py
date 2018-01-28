@@ -28,9 +28,7 @@ class ScanSerializer(Serializer):
 
     def result(self, row):
         result = row.result()
-        if result:
-            return result.id
-        return None
+        return result.id if result else None
 
 
 class ResultSerializer(Serializer):
