@@ -1,10 +1,11 @@
 from time import sleep
 
+import os
 import scipy.io
 from celery import Celery
 from weppy import App
 from weppy.orm import Database
-from emc-scanner import skaner
+from emc_scanner import skaner
 
 from models.hardware import FieldProbe, SpectrumAnalyzer
 from models.scanning import Scan, ScanResult, XResultRow, ScanResultMat
@@ -21,6 +22,20 @@ def initialize_database():
 
 
 def save_scan_result(scan):
+    x, y, z, f = [], [], [], []
+    e = []
+
+    files = os.listdir('data/{}'.format(scan.id))
+    for filename in files:
+        mesurement_no, coords_and_extension = filename.split('-')
+        coords = coords_and_extension[:-4]
+        x, y, z = coords.split('_')
+        f = open(filename)
+        lines = f.readlines()[28:]
+        for line in lines:
+            frequency, max, min = line.split(';')
+
+
     # Here should be code for parsing data from spectrum analyzer and saving it as .mat file
     sr = ScanResultMat.create(mat_filename='NFS.mat', scan=scan.id)
     print(sr)
@@ -38,6 +53,8 @@ class ScanerObserver():
         with db.connection():
             scan = Scan.get(self.scan_id)
             scan.update_record(progress=progress / total * 100)
+            if progress == total:
+                scan.update_record(status='finished')
             db.commit()
 
 
@@ -46,7 +63,7 @@ def increase_progress(scan_id):
     db = initialize_database()
     scan_observer = ScanerObserver(scan_id)
     nfs = skaner.NFS(observer=scan_observer)
-    nfs.scan('emc_scanner/test2.gcode')
+    nfs.scan('emc_scanner/test2.gcode', scan_id=scan_id)
     # with db.connection():
     #     scan = Scan.get(scan_id)
     #     while scan.progress != 80:
