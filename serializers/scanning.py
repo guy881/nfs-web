@@ -27,7 +27,7 @@ class ScanSerializer(Serializer):
         return row.kind in ['volumetric', 'z']
 
     def result(self, row):
-        result = row.result()
+        result = row.result_mat()
         return result.id if result else None
 
 

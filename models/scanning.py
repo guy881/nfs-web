@@ -7,7 +7,7 @@ class Scan(Model):
     tablename = 'Scans'
     belongs_to({'analyzer': 'SpectrumAnalyzer'})
     belongs_to({'probe': 'FieldProbe'})
-    has_one({'result': 'ScanResult'})
+    has_one({'result_mat': 'ScanResultMat'})
     name = Field.string()
     date = Field.datetime()
     kind = Field.string()
