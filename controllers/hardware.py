@@ -1,6 +1,5 @@
 from weppy.tools import service
 
-from app import app
 from models.hardware import SpectrumAnalyzer
 
 

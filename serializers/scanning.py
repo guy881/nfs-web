@@ -1,3 +1,4 @@
+import scipy.io
 from weppy_rest import Serializer
 
 from models.scanning import Scan
@@ -26,7 +27,38 @@ class ScanSerializer(Serializer):
         return row.kind in ['volumetric', 'z']
 
     def result(self, row):
-        result = row.result()
-        if result:
-            return result.id
-        return None
+        result = row.result_mat()
+        return result.id if result else None
+
+
+class ResultSerializer(Serializer):
+    attributes = ['id', 'x_index', 'y']
+
+
+class ScanResultMatSerializer(Serializer):
+    attributes = ['id']
+
+    def __serialize__(self, row, **extras):
+        self.mat_contents = scipy.io.loadmat('data/{}'.format(row.mat_filename))
+        return super().__serialize__(row, **extras)
+
+    def x(self, row):
+        x = self.mat_contents['x'].flatten()
+        return x.tolist()
+
+    def y(self, row):
+        y = self.mat_contents['y'].flatten()
+        return y.tolist()
+
+    def z(self, row):
+        z = self.mat_contents['z'].flatten()
+        return z.tolist()
+
+    def f(self, row):
+        f = self.mat_contents['f'].flatten()
+        return f.tolist()
+
+    def e(self, row):
+        e = self.mat_contents['E']
+        return e.tolist()
+

@@ -1,14 +1,16 @@
 from datetime import datetime
 
 from multiprocessing.pool import Pool
+
+import scipy.io
 from weppy import App, response
 from weppy.orm import Database
 from weppy_bs3 import BS3
-from weppy_rest import REST
+from weppy_rest import REST, serialize
 
 from logic.scanning import begin_scan, scan_finished_callback
 from serializers.hardware import SpectrumAnalyzerSerializer, FieldProbeSerializer
-from serializers.scanning import ScanSerializer
+from serializers.scanning import ScanSerializer, ResultSerializer, ScanResultMatSerializer
 from tasks import increase_progress
 from utils import CORS
 
@@ -22,10 +24,10 @@ db = Database(app, auto_migrate=True)
 app.pipeline = [db.pipe, CORS()]
 
 from models.hardware import SpectrumAnalyzer, FieldProbe
-from models.scanning import Scan, ScanResult
+from models.scanning import Scan, ScanResult, XResultRow, ScanResultMat
 
-db.define_models(SpectrumAnalyzer, FieldProbe, Scan, ScanResult)
-from controllers import main, hardware
+db.define_models(SpectrumAnalyzer, FieldProbe, Scan, ScanResult, XResultRow, ScanResultMat)
+from controllers import main, hardware, scanning
 
 analyzers = app.rest_module(__name__, 'spectrumanalyzer', SpectrumAnalyzer, serializer=SpectrumAnalyzerSerializer,
                             url_prefix='analyzers')
@@ -33,7 +35,10 @@ probes = app.rest_module(__name__, 'fieldprobe', FieldProbe, serializer=FieldPro
 
 scans = app.rest_module(__name__, 'scan', Scan, serializer=ScanSerializer, url_prefix='scans')
 
-results = app.rest_module(__name__, 'result', ScanResult, url_prefix='results')
+results = app.rest_module(__name__, 'result', ScanResult, serializer=ResultSerializer, url_prefix='results')
+
+# mat_results = app.rest_module(__name__, 'mat_results', ScanResultMat, serializer=ScanResultMatSerializer,
+#                               url_prefix='matresults')
 
 
 @scans.index()
@@ -65,6 +70,18 @@ def scans_new():
     # pool.close()
 
     return serialized_scan
+
+
+@results.read()
+def get_result(row):
+    print(type(row.x_results))
+    rows = row.x_results()
+    return list(map(lambda x: serialize(x, ResultSerializer), rows))
+    # return results.serialize_one(row)
+
+# @mat_results.read()
+# def get_mat_result(row):
+
 
 
 if __name__ == "__main__":

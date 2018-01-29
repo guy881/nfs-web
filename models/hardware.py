@@ -57,7 +57,7 @@ class FieldProbe(Model):
     max_frequency = Field.float()
     min_frequency_unit = Field.string(default='GHz')
     max_frequency_unit = Field.string(default='GHz')
-    correction_factor = Field.float()
+    correction_factor = Field.string()  # filename
     default = Field.bool()
 
     validation = {

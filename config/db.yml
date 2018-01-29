@@ -2,4 +2,4 @@ adapter: postgres
 host: localhost
 user: nfs
 password: asdasd12
-database: nfs
+database: nfs-pi3
