@@ -63,7 +63,7 @@ def increase_progress(scan_id):
     db = initialize_database()
     scan_observer = ScanerObserver(scan_id)
     nfs = skaner.NFS(observer=scan_observer)
-    nfs.scan('emc_scanner/test2.gcode', scan_id=scan_id)
+    nfs.scan('emc_scanner/rpi0_res10.gcode', scan_id=scan_id)
     # with db.connection():
     #     scan = Scan.get(scan_id)
     #     while scan.progress != 80:
