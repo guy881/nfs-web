@@ -1,5 +1,6 @@
 from time import sleep
 
+import os
 import scipy.io
 from celery import Celery
 from weppy import App
@@ -21,6 +22,20 @@ def initialize_database():
 
 
 def save_scan_result(scan):
+    x, y, z, f = [], [], [], []
+    e = []
+
+    files = os.listdir('data/{}'.format(scan.id))
+    for filename in files:
+        mesurement_no, coords_and_extension = filename.split('-')
+        coords = coords_and_extension[:-4]
+        x, y, z = coords.split('_')
+        f = open(filename)
+        lines = f.readlines()[28:]
+        for line in lines:
+            frequency, max, min = line.split(';')
+
+
     # Here should be code for parsing data from spectrum analyzer and saving it as .mat file
     sr = ScanResultMat.create(mat_filename='NFS.mat', scan=scan.id)
     print(sr)
