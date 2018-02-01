@@ -1,8 +1,10 @@
+import string
 from time import sleep
 
 import os
 import scipy.io
 from celery import Celery
+from random import choices
 from weppy import App
 from weppy.orm import Database
 from emc_scanner import skaner
@@ -85,6 +87,15 @@ class ScanerObserver():
 @celer.task
 def increase_progress(scan_id):
     scan_observer = ScanerObserver(scan_id)
+    db = initialize_database()
     nfs = skaner.NFS(observer=scan_observer)
-    nfs.scan('emc_scanner/rpi0_res10.gcode', scan_id=scan_id)
+    with db.connection():
+        scan = Scan.get(scan_id)
+    start_point = (scan.min_x, scan.min_y, scan.min_z)
+    stop_point = (scan.max_x, scan.max_y, scan.max_z)
+    gcodes_dir = 'data'
+    gcode_filename = ''.join(choices(string.ascii_lowercase, k=10))
+    gcode_path = os.path.join(gcodes_dir, gcode_filename)
+    nfs.create_gcode(1, 1, start_point, stop_point, gcode_path)
+    nfs.scan(gcode_path, scan_id=scan_id)
     save_scan_result(scan_id)

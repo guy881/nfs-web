@@ -43,7 +43,7 @@ results = app.rest_module(__name__, 'result', ScanResult, serializer=ResultSeria
 
 @scans.index()
 def scans_list(dbset):
-    rows = dbset.select(paginate=scans.get_pagination())
+    rows = dbset.select()
     response = scans.serialize_many(rows)
     last = Scan.last()
     new_id = last.id + 1 if last else 1
